@@ -15,5 +15,5 @@ public:
 	void setCol(int c) { this->col = c; }
 	Node* getLink() { return link; }
 	void setLink(Node* next) { link = next; }
-	void display() { printf("[%d,%d],", row, col); }
+	void display() { printf("[%d,%d] ", row, col); }
 };

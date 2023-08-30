@@ -41,7 +41,7 @@ void main()
 		}
 		catch (exception e)
 		{
-			printf("올바른 숫자를 입력해주세요\n");
+			printf("올바른 숫자를 입력해주세요.\n");
 			continue;
 		}
 
@@ -54,7 +54,7 @@ void main()
 		else if (a == 3) break;
 		do
 		{
-			printf("1. 스택&큐 미로탐색, 2. 스택 미로탐색(깊이 우선), 3. 큐 미로탐색(너비 우선), 4. 뒤로\n");
+			printf("[1] 스택&큐 미로탐색, [2] 스택 미로탐색 (깊이 우선), [3] 큐 미로탐색 (너비 우선), [4] 뒤로가기 \n");
 			printf("입력 : ");
 			cin >> str;
 			system("cls");
@@ -63,7 +63,7 @@ void main()
 			}
 			catch (exception e)
 			{
-				printf("올바른 숫자를 입력해주세요\n");
+				printf("올바른 숫자를 입력해주세요.\n");
 			}
 			switch (a)
 			{
@@ -92,18 +92,19 @@ void main()
 			case 4:
 				break;
 			default:
-				cout << "올바른 숫자를 입력해주세요" << endl;
+				cout << "올바른 숫자를 입력해주세요." << endl;
 			}
 		} while (a != 4);
 	} while (1);
 }
 
 // 함수 정의
+// 파일 입출력으로 미로 받아오는 함수
 void GetMap(int ran)
 {
 	FILE* getting;
 	if (ran == 1)
-		getting = fopen("input.txt", "r"); // input.txt로 부터 getting 변수에 읽어들임.
+		getting = fopen("input.txt", "r"); // input.txt로 부터 getting 변수에 읽어들인다.
 	else
 		getting = fopen("randomMaze.txt", "r");
 	char temp[100];// 받아온 한줄을 임시로 받는 변수
@@ -111,21 +112,23 @@ void GetMap(int ran)
 	{
 		if (!fgets(temp, 100, getting))     // 받아온 줄이 공백이면,
 		{
-			MAZE_HEIGHT = i;                // i 가 미로의 세로길이
+			MAZE_HEIGHT = i;                // i = 미로의 세로길이
 			break;                          // 루프 탈출.
 		}
-		else map[i] = temp;                // 받아온 줄이 내용이 있다면, map의 i줄에 저장.
+		else map[i] = temp;                // 받아온 줄이 내용에 존재한다면, map의 i번째 줄에 저장한다.
 	}
-	MAZE_WIDTH = map[0].size();         // 루프를 탈출하면, 첫번째 스트링의 크기가 미로의 가로길이.(미로는 사각형 이므로 몇번째 스트링으로 할진 무관함.)
+	MAZE_WIDTH = map[0].size();         // 루프를 탈출하면, 첫번째 스트링의 크기가 미로의 가로길이가 된다. 미로는 사각형 이므로 몇번째 문자열로 할 것인지는 무관한다.
 	fclose(getting);
 }
 
+// 해당 위치 유효성 확인 함수
 bool isValidLoc(int r, int c)
 {
-	if (r < 0 || c < 0 || r >= MAZE_HEIGHT || c >= MAZE_WIDTH) return false; //배열 범위 밖의 미로 걸러냄. false 반환
-	else return map[r][c] == '0' || map[r][c] == 'x'; // 길이나 출구일 때 true 반환. 벽이면 false 반환
+	if (r < 0 || c < 0 || r >= MAZE_HEIGHT || c >= MAZE_WIDTH) return false; //배열 범위 밖의 미로를 감지하면 false 반환
+	else return map[r][c] == '0' || map[r][c] == 'x'; // 길이나 출구면 true를 반환. 벽이면 false 반환
 }
 
+// 가시성 출력 함수
 void printMap()
 {
 	printf("엔터를 입력해주세요.");
@@ -155,14 +158,15 @@ void printMap()
 					exit_->setCol(j);
 				}
 			}// 출구
-			else if (map[i][j] == '.') printf("♩"); // 지나온 경로
+			else if (map[i][j] == '.') printf("♩"); // 지나온 경로를 표시
 			else if (map[i][j] == '2') printf("♩");
 		}
 		printf("\n");
 	}
 }
 
-void StackMaze(int ran) // 스택 미로 탐색 시작
+// 스택 미로 탐색하는 함수
+void StackMaze(int ran) 
 {
 	stackPath = new LinkedQueue();
 	entry = new Node(0, 0);
@@ -172,15 +176,15 @@ void StackMaze(int ran) // 스택 미로 탐색 시작
 	int stackSuccess = 0; // 스택 미로 탐색 성공 여부 확인용
 	printMap(); // 맵 출력, 동시에 입구 위치 기억
 	LinkedStack locStack;
-	locStack.push(entry); // 스택에 입구 위치 집어넣음.
+	locStack.push(entry); // 스택에 입구 위치를 집어넣는다.
 
 	while (locStack.isEmpty() == false)
 	{
-		Node* here = locStack.pop(); // 현재 위치 노드 불러옴
+		Node* here = locStack.pop(); // 현재 위치 노드를 불러온다.
 
 		int r = here->getRow();
 		int c = here->getCol();
-		stackPath->enqueue(new Node(r, c)); // 현재 위치 저장
+		stackPath->enqueue(new Node(r, c)); // 현재 위치를 저장
 		if (map[r][c] == 'x') // 현재 위치가 출구이면 성공
 		{
 			printMap();
@@ -210,7 +214,8 @@ void StackMaze(int ran) // 스택 미로 탐색 시작
 	delete entry;
 }
 
-void QueueMaze(int ran) // 큐 미로 탐색 시작
+// 큐 미로 탐색하는 함수
+void QueueMaze(int ran) 
 {
 	queuePath = new LinkedQueue();
 	entry = new Node(0, 0);
@@ -269,8 +274,7 @@ void QueueMaze(int ran) // 큐 미로 탐색 시작
 	delete exit_;
 }
 
-// 스택 맵 저장
-
+// 스택 맵 저장하는 함수
 void StackMapSave()
 {
 	for (int i = 0; i < MAXCAP; i++)

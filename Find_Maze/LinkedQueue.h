@@ -36,6 +36,6 @@ public:
         int i = 0;
         for (Node* p = front; p != NULL; p = p->getLink(),i++)
             p->display();
-        printf(" %dÈ¸ \n",i);
+        printf("\n\nÃÑ Å½»ö È½¼ö: %dÈ¸ \n",i);
     }
 };
